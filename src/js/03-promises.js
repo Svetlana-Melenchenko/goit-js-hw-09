@@ -19,7 +19,7 @@ function createPromise(position, delay) {
   });
 }
 
-form.addEventListener('submit', async e => {
+form.addEventListener('submit', e => {
   e.preventDefault();
 
   const initialDelay = parseInt(delayInput.value);
@@ -33,16 +33,23 @@ form.addEventListener('submit', async e => {
     return;
   }
 
-  for (let i = 1; i <= amount; i++) {
-    try {
-      const result = await createPromise(i, initialDelay + (i - 1) * step);
-      notiflix.Notify.success(
-        `✅ Fulfilled promise ${result.position} in ${result.delay}ms`
-      );
-    } catch (error) {
-      notiflix.Notify.failure(
-        `❌ Rejected promise ${error.position} in ${error.delay}ms`
-      );
-    }
+  let delay = initialDelay;
+
+  for (let i = 1; i <= amount; i += 1) {
+    createPromise(i, delay)
+      .then(result => {
+        notiflix.Notify.success(
+          `✅ Fulfilled promise ${result.position} in ${result.delay}ms`
+        );
+      })
+      .catch(error => {
+        notiflix.Notify.failure(
+          `❌ Rejected promise ${error.position} in ${error.delay}ms`
+        );
+      });
+
+    delay += step;
   }
 });
+
+//  Вроде исправила
